@@ -122,7 +122,7 @@ func NewFireflyConfigs(stack *Stack) map[string]*FireflyConfig {
 			Database: &DatabaseConfig{
 				Type: "ql",
 				Ql: &QlConfig{
-					URL: "memory://",
+					URL: "file:///firefly/ql",
 					Migrations: &MigrationsConfig{
 						Auto: true,
 					},
