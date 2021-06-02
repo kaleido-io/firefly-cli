@@ -67,25 +67,25 @@ func CreateDockerCompose(stack *Stack) *DockerComposeConfig {
 
 	for _, member := range stack.Members {
 		compose.Services["firefly_core_"+member.ID] = &Service{
-			Image:     "kaleidoinc/firefly",
-			Ports:     []string{fmt.Sprint(member.ExposedFireflyPort) + ":5000"},
-			Volumes:   []string{path.Join(stackDir, "firefly_"+member.ID+".core") + ":/etc/firefly/firefly.core"},
-			DependsOn: map[string]map[string]string{"postgres_" + member.ID: {"condition": "service_healthy"}},
-			Logging:   standardLogOptions,
-		}
-
-		compose.Services["postgres_"+member.ID] = &Service{
-			Image:       "postgres",
-			Environment: map[string]string{"POSTGRES_PASSWORD": "f1refly"},
-			Volumes:     []string{path.Join(dataDir, "postgres_"+member.ID) + ":/var/lib/postgresql/data"},
-			HealthCheck: &HealthCheck{
-				Test:     []string{"CMD-SHELL", "pg_isready -U postgres"},
-				Interval: "5s",
-				Timeout:  "5s",
-				Retries:  5,
-			},
+			Image:   "kaleidoinc/firefly",
+			Ports:   []string{fmt.Sprint(member.ExposedFireflyPort) + ":5000"},
+			Volumes: []string{path.Join(stackDir, "firefly_"+member.ID+".core") + ":/etc/firefly/firefly.core"},
+			// DependsOn: map[string]map[string]string{"postgres_" + member.ID: {"condition": "service_healthy"}},
 			Logging: standardLogOptions,
 		}
+
+		// compose.Services["postgres_"+member.ID] = &Service{
+		// 	Image:       "postgres",
+		// 	Environment: map[string]string{"POSTGRES_PASSWORD": "f1refly"},
+		// 	Volumes:     []string{path.Join(dataDir, "postgres_"+member.ID) + ":/var/lib/postgresql/data"},
+		// 	HealthCheck: &HealthCheck{
+		// 		Test:     []string{"CMD-SHELL", "pg_isready -U postgres"},
+		// 		Interval: "5s",
+		// 		Timeout:  "5s",
+		// 		Retries:  5,
+		// 	},
+		// 	Logging: standardLogOptions,
+		// }
 
 		compose.Services["ethconnect_"+member.ID] = &Service{
 			Image:     "kaleidoinc/ethconnect",

@@ -50,7 +50,7 @@ type BlockchainConfig struct {
 	Ethereum *EthereumConfig `yaml:"ethereum,omitempty"`
 }
 
-type PostgresConfig struct {
+type QlConfig struct {
 	URL        string            `yaml:"url,omitempty"`
 	Migrations *MigrationsConfig `yaml:"migrations,omitempty"`
 }
@@ -61,8 +61,9 @@ type MigrationsConfig struct {
 }
 
 type DatabaseConfig struct {
-	Type     string          `yaml:"type,omitempty"`
-	Postgres *PostgresConfig `yaml:"postgres,omitempty"`
+	Type     string    `yaml:"type,omitempty"`
+	Postgres *QlConfig `yaml:"postgres,omitempty"`
+	Ql       *QlConfig `yaml:"ql,omitempty"`
 }
 
 type PublicStorageConfig struct {
@@ -119,9 +120,9 @@ func NewFireflyConfigs(stack *Stack) map[string]*FireflyConfig {
 				},
 			},
 			Database: &DatabaseConfig{
-				Type: "postgres",
-				Postgres: &PostgresConfig{
-					URL: "postgres://postgres:f1refly@postgres_" + member.ID + ":5432?sslmode=disable",
+				Type: "ql",
+				Ql: &QlConfig{
+					URL: "memory://",
 					Migrations: &MigrationsConfig{
 						Auto: true,
 					},
