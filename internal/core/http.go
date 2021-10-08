@@ -24,14 +24,26 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/hyperledger/firefly-cli/internal/log"
 )
 
-func RequestWithRetry(method, url string, body, result interface{}) (err error) {
+type HttpClient struct {
+	log log.Logger
+}
+
+func NewHttpClient(log log.Logger) *HttpClient {
+	return &HttpClient{
+		log: log,
+	}
+}
+
+func (h *HttpClient) RequestWithRetry(method, url string, body, result interface{}) (err error) {
 	retries := 30
 	for {
 		if err := request(method, url, body, result); err != nil {
 			if retries > 0 {
-				fmt.Printf("%s - retrying request...", err.Error())
+				h.log.Warnf("%s - retrying request...", err.Error())
 				retries--
 				time.Sleep(1 * time.Second)
 			} else {

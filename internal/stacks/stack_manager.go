@@ -54,6 +54,7 @@ type StackManager struct {
 	Stack              *types.Stack
 	blockchainProvider blockchain.IBlockchainProvider
 	tokensProvider     tokens.ITokensProvider
+	http               *core.HttpClient
 }
 
 type StartOptions struct {
@@ -94,7 +95,8 @@ func ListStacks() ([]string, error) {
 
 func NewStackManager(logger log.Logger) *StackManager {
 	return &StackManager{
-		Log: logger,
+		Log:  logger,
+		http: core.NewHttpClient(logger),
 	}
 }
 
@@ -588,11 +590,11 @@ func (s *StackManager) patchConfigAndRestartFireflyNodes(verbose bool) error {
 	for _, member := range s.Stack.Members {
 		s.Log.Info(fmt.Sprintf("applying configuration changes to %s", member.ID))
 		configRecordUrl := fmt.Sprintf("http://localhost:%d/admin/api/v1/config/records/admin", member.ExposedFireflyAdminPort)
-		if err := core.RequestWithRetry("PUT", configRecordUrl, "{\"preInit\": false}", nil); err != nil && err != io.EOF {
+		if err := s.http.RequestWithRetry("PUT", configRecordUrl, "{\"preInit\": false}", nil); err != nil && err != io.EOF {
 			return err
 		}
 		resetUrl := fmt.Sprintf("http://localhost:%d/admin/api/v1/config/reset", member.ExposedFireflyAdminPort)
-		if err := core.RequestWithRetry("POST", resetUrl, "{}", nil); err != nil {
+		if err := s.http.RequestWithRetry("POST", resetUrl, "{}", nil); err != nil {
 			return err
 		}
 	}
@@ -643,6 +645,7 @@ func (s *StackManager) getTokensProvider(verbose bool) tokens.ITokensProvider {
 			Verbose: verbose,
 			Log:     s.Log,
 			Stack:   s.Stack,
+			HTTP:    s.http,
 		}
 	default:
 		return nil

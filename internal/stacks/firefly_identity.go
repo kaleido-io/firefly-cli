@@ -20,8 +20,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/hyperledger/firefly-cli/internal/core"
 )
 
 func (s *StackManager) registerFireflyIdentities(verbose bool) error {
@@ -32,7 +30,7 @@ func (s *StackManager) registerFireflyIdentities(verbose bool) error {
 		s.Log.Info(fmt.Sprintf("registering org and node for member %s", member.ID))
 
 		registerOrgURL := fmt.Sprintf("%s/network/register/node/organization", ffURL)
-		err := core.RequestWithRetry(http.MethodPost, registerOrgURL, emptyObject, nil)
+		err := s.http.RequestWithRetry(http.MethodPost, registerOrgURL, emptyObject, nil)
 		if err != nil {
 			return err
 		}
@@ -46,7 +44,7 @@ func (s *StackManager) registerFireflyIdentities(verbose bool) error {
 			}
 			orgURL := fmt.Sprintf("%s/network/organizations", ffURL)
 			var orgs []establishedOrg
-			err := core.RequestWithRetry(http.MethodGet, orgURL, nil, &orgs)
+			err := s.http.RequestWithRetry(http.MethodGet, orgURL, nil, &orgs)
 			if err != nil {
 				return nil
 			}
@@ -62,7 +60,7 @@ func (s *StackManager) registerFireflyIdentities(verbose bool) error {
 		}
 
 		registerNodeURL := fmt.Sprintf("%s/network/register/node", ffURL)
-		err = core.RequestWithRetry(http.MethodPost, registerNodeURL, emptyObject, nil)
+		err = s.http.RequestWithRetry(http.MethodPost, registerNodeURL, emptyObject, nil)
 		if err != nil {
 			return nil
 		}

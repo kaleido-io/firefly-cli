@@ -30,6 +30,7 @@ type ERC1155Provider struct {
 	Log     log.Logger
 	Verbose bool
 	Stack   *types.Stack
+	HTTP    *core.HttpClient
 }
 
 func (p *ERC1155Provider) DeploySmartContracts() error {
@@ -40,7 +41,7 @@ func (p *ERC1155Provider) FirstTimeSetup() error {
 	for _, member := range p.Stack.Members {
 		p.Log.Info(fmt.Sprintf("initializing tokens on member %s", member.ID))
 		tokenInitUrl := fmt.Sprintf("http://localhost:%d/api/v1/init", member.ExposedTokensPort)
-		if err := core.RequestWithRetry("POST", tokenInitUrl, nil, nil); err != nil {
+		if err := p.HTTP.RequestWithRetry("POST", tokenInitUrl, nil, nil); err != nil {
 			return err
 		}
 	}
