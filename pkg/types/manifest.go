@@ -28,6 +28,7 @@ type VersionManifest struct {
 	Fabconnect   *ManifestEntry `json:"fabconnect"`
 	DataExchange *ManifestEntry `json:"dataexchange-https"`
 	Tokens       *ManifestEntry `json:"tokens-erc1155"`
+	Tokens20     *ManifestEntry `json:"tokens-erc20"`
 }
 
 func (m *VersionManifest) Entries() []*ManifestEntry {
@@ -40,6 +41,7 @@ func (m *VersionManifest) Entries() []*ManifestEntry {
 		m.Fabconnect,
 		m.DataExchange,
 		m.Tokens,
+		m.Tokens20,
 	}
 }
 

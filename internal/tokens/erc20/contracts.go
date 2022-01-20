@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package erc1155
+package erc20
 
 import (
 	"errors"
@@ -27,7 +27,10 @@ import (
 	"github.com/hyperledger/firefly-cli/pkg/types"
 )
 
-const TOKEN_URI_PATTERN = "firefly://token/{id}"
+var TOKEN_INIT_ARGS = map[string]string{
+	"name":   "initName",
+	"symbol": "initSymbol",
+}
 
 func DeployContracts(s *types.Stack, log log.Logger, verbose bool) error {
 	var containerName string
@@ -46,28 +49,53 @@ func DeployContracts(s *types.Stack, log log.Logger, verbose bool) error {
 		return err
 	}
 
-	tokenContract, err := ethereum.ReadCompiledContract(filepath.Join(constants.StacksDir, s.Name, "contracts", "ERC1155MixedFungible.json"))
+	// Token Factory
+	tokenFactoryContract, err := ethereum.ReadCompiledContract(filepath.Join(constants.StacksDir, s.Name, "contracts", "ERC20WithDataFactory.json"))
 	if err != nil {
 		return err
 	}
-
-	var tokenContractAddress string
+	var tokenFactoryContractAddress string
 	for _, member := range s.Members {
-		if tokenContractAddress == "" {
+		if tokenFactoryContractAddress == "" {
 			// TODO: version the registered name
-			log.Info(fmt.Sprintf("deploying ERC1155 contract on '%s'", member.ID))
-			tokenContractAddress, _, err = ethereum.DeployContract(member, tokenContract, "erc1155", map[string]string{"uri": TOKEN_URI_PATTERN})
+			log.Info(fmt.Sprintf("deploying ERC20 factory contract on '%s'", member.ID))
+			tokenFactoryContractAddress, _, err = ethereum.DeployContract(member, tokenFactoryContract, "erc20Factory", TOKEN_INIT_ARGS)
 			if err != nil {
 				return err
 			}
 		} else {
-			log.Info(fmt.Sprintf("registering ERC1155 contract on '%s'", member.ID))
-			err = ethereum.RegisterContract(member, tokenContract, tokenContractAddress, "erc1155", map[string]string{"uri": TOKEN_URI_PATTERN})
+			log.Info(fmt.Sprintf("registering ERC20 factory contract on '%s'", member.ID))
+			err = ethereum.RegisterContract(member, tokenFactoryContract, tokenFactoryContractAddress, "erc20Factory", TOKEN_INIT_ARGS)
 			if err != nil {
 				return err
 			}
 		}
 	}
+
+	// Token contract
+	tokenContract, err := ethereum.ReadCompiledContract(filepath.Join(constants.StacksDir, s.Name, "contracts", "ERC20WithData.json"))
+	if err != nil {
+		return err
+	}
+	var tokenContractAddress string
+	var contractAbiID string
+	for _, member := range s.Members {
+		if tokenContractAddress == "" {
+			log.Info(fmt.Sprintf("deploying ERC20 contract on '%s'", member.ID))
+			tokenContractAddress, contractAbiID, err = ethereum.DeployContract(member, tokenContract, "erc20", TOKEN_INIT_ARGS)
+			if err != nil {
+				return err
+			}
+		} else {
+			log.Info(fmt.Sprintf("registering ERC20 contract on '%s'", member.ID))
+			err = ethereum.RegisterContract(member, tokenContract, tokenContractAddress, "erc20", TOKEN_INIT_ARGS)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	// TODO: Use value as env variable
+	fmt.Printf("\nERC20WithData.sol ABI ID: %s", contractAbiID)
 
 	return nil
 }

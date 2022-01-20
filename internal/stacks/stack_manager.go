@@ -41,6 +41,7 @@ import (
 	"github.com/hyperledger/firefly-cli/internal/docker"
 	"github.com/hyperledger/firefly-cli/internal/tokens"
 	"github.com/hyperledger/firefly-cli/internal/tokens/erc1155"
+	"github.com/hyperledger/firefly-cli/internal/tokens/erc20"
 	"github.com/hyperledger/firefly-cli/internal/tokens/niltokens"
 	"github.com/hyperledger/firefly-cli/pkg/types"
 	"golang.org/x/crypto/sha3"
@@ -239,6 +240,10 @@ func (s *StackManager) LoadStack(stackName string, verbose bool) error {
 			},
 			Tokens: &types.ManifestEntry{
 				Image: "ghcr.io/hyperledger/firefly-tokens-erc1155",
+				Tag:   "latest",
+			},
+			Tokens20: &types.ManifestEntry{
+				Image: "ghcr.io/hyperledger/firefly-tokens-erc20",
 				Tag:   "latest",
 			},
 		}
@@ -784,6 +789,12 @@ func (s *StackManager) getTokensProvider(verbose bool) tokens.ITokensProvider {
 		}
 	case ERC1155.String():
 		return &erc1155.ERC1155Provider{
+			Verbose: verbose,
+			Log:     s.Log,
+			Stack:   s.Stack,
+		}
+	case ERC20.String():
+		return &erc20.ERC20Provider{
 			Verbose: verbose,
 			Log:     s.Log,
 			Stack:   s.Stack,

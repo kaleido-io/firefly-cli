@@ -57,7 +57,7 @@ func DeployContracts(s *types.Stack, log log.Logger, verbose bool) error {
 		if fireflyContractAddress == "" {
 			// TODO: version the registered name
 			log.Info(fmt.Sprintf("deploying firefly contract on '%s'", member.ID))
-			fireflyContractAddress, err = DeployContract(member, fireflyContract, "firefly", map[string]string{})
+			fireflyContractAddress, _, err = DeployContract(member, fireflyContract, "firefly", map[string]string{})
 			if err != nil {
 				return err
 			}
@@ -91,17 +91,17 @@ func ExtractContracts(stackName string, containerName string, dirName string, ve
 	return nil
 }
 
-func DeployContract(member *types.Member, contract *types.Contract, name string, args map[string]string) (string, error) {
+func DeployContract(member *types.Member, contract *types.Contract, name string, args map[string]string) (string, string, error) {
 	ethconnectUrl := fmt.Sprintf("http://127.0.0.1:%v", member.ExposedConnectorPort)
 	abiResponse, err := ethconnect.PublishABI(ethconnectUrl, contract)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	deployResponse, err := ethconnect.DeployContract(ethconnectUrl, abiResponse.ID, member.Address, args, name)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return deployResponse.ContractAddress, nil
+	return deployResponse.ContractAddress, abiResponse.ID, nil
 }
 
 func RegisterContract(member *types.Member, contract *types.Contract, contractAddress string, name string, args map[string]string) error {

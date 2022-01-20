@@ -38,6 +38,7 @@ func TestGetFireFlyManifest(T *testing.T) {
 	assert.NotNil(T, manifest.Fabconnect)
 	assert.NotNil(T, manifest.DataExchange)
 	assert.NotNil(T, manifest.Tokens)
+	assert.NotNil(T, manifest.Tokens20)
 }
 
 func TestGetLatestReleaseManifest(T *testing.T) {
@@ -49,4 +50,5 @@ func TestGetLatestReleaseManifest(T *testing.T) {
 	assert.NotNil(T, manifest.Fabconnect)
 	assert.NotNil(T, manifest.DataExchange)
 	assert.NotNil(T, manifest.Tokens)
+	assert.NotNil(T, manifest.Tokens20)
 }
