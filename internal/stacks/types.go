@@ -72,11 +72,10 @@ type TokensProvider int
 const (
 	NilTokens TokensProvider = iota
 	ERC1155
-	ERC20
-	ERC721
+	ERC20ERC721
 )
 
-var TokensProviderStrings = []string{"none", "erc1155", "erc20", "erc721"}
+var TokensProviderStrings = []string{"none", "erc1155", "erc20erc721"}
 
 func (tokensProvider TokensProvider) String() string {
 	return TokensProviderStrings[tokensProvider]

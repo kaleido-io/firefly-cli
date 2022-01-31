@@ -23,13 +23,12 @@ type GitHubRelease struct {
 }
 
 type VersionManifest struct {
-	FireFly       *ManifestEntry `json:"firefly,omitempty"`
-	Ethconnect    *ManifestEntry `json:"ethconnect"`
-	Fabconnect    *ManifestEntry `json:"fabconnect"`
-	DataExchange  *ManifestEntry `json:"dataexchange-https"`
-	TokensERC1155 *ManifestEntry `json:"tokens-erc1155"`
-	TokensERC20   *ManifestEntry `json:"tokens-erc20"`
-	TokensERC721  *ManifestEntry `json:"tokens-erc721"`
+	FireFly           *ManifestEntry `json:"firefly,omitempty"`
+	Ethconnect        *ManifestEntry `json:"ethconnect"`
+	Fabconnect        *ManifestEntry `json:"fabconnect"`
+	DataExchange      *ManifestEntry `json:"dataexchange-https"`
+	TokensERC1155     *ManifestEntry `json:"tokens-erc1155"`
+	TokensERC20ERC721 *ManifestEntry `json:"tokens-erc20-erc721"`
 }
 
 func (m *VersionManifest) Entries() []*ManifestEntry {
@@ -42,8 +41,7 @@ func (m *VersionManifest) Entries() []*ManifestEntry {
 		m.Fabconnect,
 		m.DataExchange,
 		m.TokensERC1155,
-		m.TokensERC20,
-		m.TokensERC721,
+		m.TokensERC20ERC721,
 	}
 }
 

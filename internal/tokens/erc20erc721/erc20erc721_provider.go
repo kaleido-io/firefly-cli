@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package erc20
+package erc20erc721
 
 import (
 	"fmt"
@@ -25,17 +25,17 @@ import (
 	"github.com/hyperledger/firefly-cli/pkg/types"
 )
 
-type ERC20Provider struct {
+type ERC20ERC721Provider struct {
 	Log     log.Logger
 	Verbose bool
 	Stack   *types.Stack
 }
 
-func (p *ERC20Provider) DeploySmartContracts() error {
+func (p *ERC20ERC721Provider) DeploySmartContracts() error {
 	return nil
 }
 
-func (p *ERC20Provider) FirstTimeSetup() error {
+func (p *ERC20ERC721Provider) FirstTimeSetup() error {
 	for _, member := range p.Stack.Members {
 		p.Log.Info(fmt.Sprintf("initializing tokens on member %s", member.ID))
 		tokenInitUrl := fmt.Sprintf("http://localhost:%d/api/v1/init", member.ExposedTokensPort)
@@ -46,19 +46,19 @@ func (p *ERC20Provider) FirstTimeSetup() error {
 	return nil
 }
 
-func (p *ERC20Provider) GetDockerServiceDefinitions() []*docker.ServiceDefinition {
+func (p *ERC20ERC721Provider) GetDockerServiceDefinitions() []*docker.ServiceDefinition {
 	serviceDefinitions := make([]*docker.ServiceDefinition, 0, len(p.Stack.Members))
 	for i, member := range p.Stack.Members {
 		serviceDefinitions = append(serviceDefinitions, &docker.ServiceDefinition{
 			ServiceName: "tokens_" + member.ID,
 			Service: &docker.Service{
-				Image:         p.Stack.VersionManifest.TokensERC20.GetDockerImageString(),
+				Image:         p.Stack.VersionManifest.TokensERC20ERC721.GetDockerImageString(),
 				ContainerName: fmt.Sprintf("%s_tokens_%v", p.Stack.Name, i),
 				Ports:         []string{fmt.Sprintf("%d:3000", member.ExposedTokensPort)},
 				Environment: map[string]string{
 					"ETHCONNECT_CONTRACT_URI": "/abis/",
-					"ETHCONNECT_INSTANCE":     "/contracts/erc20Factory",
-					"ETHCONNECT_TOPIC":        "tokenERC20",
+					"ETHCONNECT_INSTANCE":     "/contracts/erc20erc721Factory",
+					"ETHCONNECT_TOPIC":        "tokensERC20ERC721",
 					"ETHCONNECT_URL":          p.getEthconnectURL(member),
 					"AUTO_INIT":               "false",
 				},
@@ -75,21 +75,21 @@ func (p *ERC20Provider) GetDockerServiceDefinitions() []*docker.ServiceDefinitio
 	return serviceDefinitions
 }
 
-func (p *ERC20Provider) GetFireflyConfig(m *types.Member) *core.TokensConfig {
+func (p *ERC20ERC721Provider) GetFireflyConfig(m *types.Member) *core.TokensConfig {
 	return &core.TokensConfig{
 		&core.TokenConnector{
 			Plugin: "fftokens",
-			Name:   "erc20",
+			Name:   "erc20erc721",
 			URL:    p.getTokensURL(m),
 		},
 	}
 }
 
-func (p *ERC20Provider) getEthconnectURL(member *types.Member) string {
+func (p *ERC20ERC721Provider) getEthconnectURL(member *types.Member) string {
 	return fmt.Sprintf("http://ethconnect_%s:8080", member.ID)
 }
 
-func (p *ERC20Provider) getTokensURL(member *types.Member) string {
+func (p *ERC20ERC721Provider) getTokensURL(member *types.Member) string {
 	if !member.External {
 		return fmt.Sprintf("http://tokens_%s:3000", member.ID)
 	} else {
