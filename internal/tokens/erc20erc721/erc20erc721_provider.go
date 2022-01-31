@@ -56,11 +56,9 @@ func (p *ERC20ERC721Provider) GetDockerServiceDefinitions() []*docker.ServiceDef
 				ContainerName: fmt.Sprintf("%s_tokens_%v", p.Stack.Name, i),
 				Ports:         []string{fmt.Sprintf("%d:3000", member.ExposedTokensPort)},
 				Environment: map[string]string{
-					"ETHCONNECT_CONTRACT_URI": "/abis/",
-					"ETHCONNECT_INSTANCE":     "/contracts/erc20erc721Factory",
-					"ETHCONNECT_TOPIC":        "tokensERC20ERC721",
-					"ETHCONNECT_URL":          p.getEthconnectURL(member),
-					"AUTO_INIT":               "false",
+					"ETHCONNECT_TOPIC": "tokensERC20ERC721",
+					"ETHCONNECT_URL":   p.getEthconnectURL(member),
+					"AUTO_INIT":        "false",
 				},
 				DependsOn: map[string]map[string]string{
 					"ethconnect_" + member.ID: {"condition": "service_started"},

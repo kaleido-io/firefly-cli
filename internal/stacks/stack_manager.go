@@ -243,7 +243,7 @@ func (s *StackManager) LoadStack(stackName string, verbose bool) error {
 				Tag:   "latest",
 			},
 			TokensERC20ERC721: &types.ManifestEntry{
-				Image: "ghcr.io/eberger727/firefly-tokens-erc20-erc721",
+				Image: "ghcr.io/hyperledger/firefly-tokens-erc20-erc721",
 				Tag:   "latest",
 			},
 		}
