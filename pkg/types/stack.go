@@ -45,6 +45,7 @@ type Stack struct {
 	DisableTokenFactories  bool             `json:"disableTokenFactories,omitempty"`
 	RequestTimeout         int              `json:"requestTimeout,omitempty"`
 	IPFSMode               fftypes.FFEnum   `json:"ipfsMode"`
+	FirstEvent             string           `json:"firstEvent"`
 	InitDir                string           `json:"-"`
 	RuntimeDir             string           `json:"-"`
 	StackDir               string           `json:"-"`

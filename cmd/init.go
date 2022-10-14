@@ -234,6 +234,7 @@ func init() {
 	initCmd.Flags().StringVarP(&initOptions.ReleaseChannel, "channel", "", "stable", fmt.Sprintf("Select the FireFly release channel to use. Options are: %v", fftypes.FFEnumValues(types.ReleaseChannelSelection)))
 	initCmd.Flags().BoolVarP(&initOptions.MultipartyEnabled, "multiparty", "", true, "Enable or disable multiparty mode")
 	initCmd.Flags().StringVarP(&initOptions.IPFSMode, "ipfs-mode", "", "private", fmt.Sprintf("Set the mode in which IFPS operates. Options are: %v", fftypes.FFEnumValues(types.IPFSMode)))
+	initCmd.Flags().StringVarP(&initOptions.FirstEvent, "first-event", "", "0", "Block number to start looking for batch pin transactions. Multiparty mode only. Valid options are an integer, 'newest' or 'oldest'.")
 
 	rootCmd.AddCommand(initCmd)
 }

@@ -56,6 +56,7 @@ type InitOptions struct {
 	ReleaseChannel           string
 	MultipartyEnabled        bool
 	IPFSMode                 string
+	FirstEvent               string
 }
 
 const IPFSMode = "ipfs_mode"

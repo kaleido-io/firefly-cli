@@ -109,6 +109,7 @@ func (s *StackManager) InitStack(stackName string, memberCount int, options *typ
 		RemoteNodeURL:     options.RemoteNodeURL,
 		RequestTimeout:    options.RequestTimeout,
 		IPFSMode:          fftypes.FFEnum(options.IPFSMode),
+		FirstEvent:        options.FirstEvent,
 	}
 
 	tokenProviders, err := types.FFEnumArray(s.ctx, options.TokenProviders)
@@ -905,7 +906,8 @@ func (s *StackManager) runFirstTimeSetup(options *types.StartOptions) (messages 
 				Org:     orgConfig,
 				Contract: []*types.ContractConfig{
 					{
-						Location: contractLocation,
+						Location:   contractLocation,
+						FirstEvent: s.Stack.FirstEvent,
 					},
 				},
 			}
